@@ -4,7 +4,7 @@
 #DISCLAIMER: Yeah I don't really know what characters I have to escape when writing them to strings so I sort of just escape anything that might be a little bit suspicious. I know I could easily look up what has to be escaped and what doesn't, but I don't think it will make much of a difference other than a few extra bits, which you can tell this comment is already taking more space than the extra back-slashes do so at least I know I won't have any unescaped characters
 #TODO write page_links array to a file
 use strict;
-use LWP::Simple; #TODO Download and install
+use LWP::Simple;
 use Time::HiRes; ('sleep'); #I want to be able to sleep for milliseconds, I don't want this program to wait a full second each time, that would make the program take forever
 use LWP::Simple::Cookies (autosave => 1, file => `cookie.txt`);
 
@@ -22,8 +22,12 @@ while($page_num >= 2 && get ($url . "categories.cfm\?catid\=3\&FTVAR\_SORT\=date
 	GetLinks($html);
 	sleep(0.025);
 }
-print(@page_links);
-die "No more pages to scan.";
+open my $fh, '>', "linklist.txt" or die "Cannot open linklist.txt: $!"; #Open file handler, make sure it worked, or give up (please dont give up, it would have gone through so much for nothing...)
+foreach (@pagelinks){
+	print $fh "$_\n"; #write array to txt file, new line for each item
+}
+close $fh;
+die "Completed successfully.";
 
 
 sub GetLinks{
