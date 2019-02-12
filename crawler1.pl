@@ -4,11 +4,11 @@
 #DISCLAIMER: Yeah I don't really know what characters I have to escape when writing them to strings so I sort of just escape anything that might be a little bit suspicious. I know I could easily look up what has to be escaped and what doesn't, but I don't think it will make much of a difference other than a few extra bits, which you can tell this comment is already taking more space than the extra back-slashes do so at least I know I won't have any unescaped characters
 
 use strict;
+#TODO ADD SLEEPS, YOU DONT WANT TO CRASH THE SERVER, IT SEEMS PRETTY WEAK
 use LWP::Simple; #TODO Download and install
-#TODO Add cookie support, you can't use this site unless cookies are availible
+use LWP::Simple::Cookies (autosave => 1, file => `curl -u 450:Aal112817 -c cookie.txt http:\/\/www.stearman.net\/fusetalk4\/forum\/loginlocked.cfm');
 
 my $url = "http:\/\/www.stearman.net\/fusetalk4\/forum\/"; #Identify the base of URL (I really don't feel like typing this over and over)
-my $max = 5000; #Max number of URLs I can have. I probably wont worry about it later and just get every single one.
 my @pagelinks; #Initialize so the value don't get overwritten every time i call GetLinks
 my $html = get("http:\/\/www.stearman.net\/fusetalk4\/forum\/categories.cfm\?catid\=3\&entercat\=y"); #Initial URL. This value changes throughout.
 my $page_num = 1; #just to keep track of what page I'm on, I need it for being able to tell when the program should end.
@@ -30,5 +30,6 @@ sub GetLinks{
 		my $cur_url = $url . $1; #use recently deleted token as directory from base URL
 		push @page_links, $cur_url; #put it in the list
 	}
-	$page_num++; #I'm done with this. Get it out of my...site.
+	$page_num++;
 }
+
