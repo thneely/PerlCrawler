@@ -31,7 +31,7 @@ die "Completed successfully.";
 
 
 sub GetLinks{
-	while (($_ =~ s/($token)[">]//){ #Find and replace token (defined above) with nothing
+	while ($_ =~ s/($token)[">]//){ #Find and replace token (defined above) with nothing
 		my $cur_url = $url . $1; #use recently deleted token as directory from base URL
 		push @page_links, $cur_url; #put it in the list
 	}
