@@ -2,11 +2,11 @@
 #
 #Simple web crawler, iterates through a forum and archives the posts for each forum thread
 #DISCLAIMER: Yeah I don't really know what characters I have to escape when writing them to strings so I sort of just escape anything that might be a little bit suspicious. I know I could easily look up what has to be escaped and what doesn't, but I don't think it will make much of a difference other than a few extra bits, which you can tell this comment is already taking more space than the extra back-slashes do so at least I know I won't have any unescaped characters
-
+#TODO write page_links array to a file
 use strict;
-#TODO ADD SLEEPS, YOU DONT WANT TO CRASH THE SERVER, IT SEEMS PRETTY WEAK
 use LWP::Simple; #TODO Download and install
-use LWP::Simple::Cookies (autosave => 1, file => `curl -u 450:Aal112817 -c cookie.txt http:\/\/www.stearman.net\/fusetalk4\/forum\/loginlocked.cfm');
+use Time::HiRes; ('sleep'); #I want to be able to sleep for milliseconds, I don't want this program to wait a full second each time, that would make the program take forever
+use LWP::Simple::Cookies (autosave => 1, file => `curl -u 450:Aal112817 -c cookie.txt http:\/\/www.stearman.net\/fusetalk4\/forum\/loginlocked.cfm`); #Do I have to escape these characters? I guess I'll find out when I try to test this.
 
 my $url = "http:\/\/www.stearman.net\/fusetalk4\/forum\/"; #Identify the base of URL (I really don't feel like typing this over and over)
 my @pagelinks; #Initialize so the value don't get overwritten every time i call GetLinks
@@ -20,6 +20,7 @@ GetLinks($html); #gotta remember to scan and save the second page, I almost forg
 while($page_num >= 2 && get ($url . "categories.cfm\?catid\=3\&FTVAR\_SORT\=date\&FTVAR\_SORTORDER\=desc\&STARTPAGE\=" . $page_num . "\&FTVAR\_FORUMVIEWTMP\=Linear")){ #This goes through every page that exists and downloads its list of threads
 	$html = get($url . "categories.cfm\?catid\=3\&FTVAR\_SORT\=date\&FTVAR\_SORTORDER\=desc\&STARTPAGE\=" . $page_num . "\&FTVAR\_FORUMVIEWTMP\=Linear");
 	GetLinks($html);
+	sleep(0.025);
 }
 print(@page_links);
 die "No more pages to scan.";
