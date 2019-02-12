@@ -6,7 +6,7 @@
 use strict;
 use LWP::Simple; #TODO Download and install
 use Time::HiRes; ('sleep'); #I want to be able to sleep for milliseconds, I don't want this program to wait a full second each time, that would make the program take forever
-use LWP::Simple::Cookies (autosave => 1, file => `curl -u 450:Aal112817 -c cookie.txt http:\/\/www.stearman.net\/fusetalk4\/forum\/loginlocked.cfm`); #Do I have to escape these characters? I guess I'll find out when I try to test this.
+use LWP::Simple::Cookies (autosave => 1, file => `cookie.txt`);
 
 my $url = "http:\/\/www.stearman.net\/fusetalk4\/forum\/"; #Identify the base of URL (I really don't feel like typing this over and over)
 my @pagelinks; #Initialize so the value don't get overwritten every time i call GetLinks
