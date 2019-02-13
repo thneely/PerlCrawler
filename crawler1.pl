@@ -5,13 +5,16 @@
 #TODO write page_links array to a file
 
 use strict;
-use LWP::Simple;
-use LWP::Simple::Cookies (autosave => 0, file => "cookie.txt");
+use LWP 6.36;
 
+
+my $crawlAg = LWP::UserAgent->new(); #UserAgent has cookie support. I dont know why I didn't use it in the first place. I don't even have to redo everything to use it.
+$crawlAg->agent('Mozilla/5.0'); #I'm a REAL BOY!!
+$crawlAg->cookie_jar({file => "cookie.txt"}); #Please eat the cookie. I need you to eat this cookie. Please.
 my $url = "http:\/\/www.stearman.net\/fusetalk4\/forum\/"; #Identify the base of URL (I really don't feel like typing this over and over)
 my @pagelinks; #Initialize so the value don't get overwritten every time i call GetLinks
 print("Page Links array initialized\n");
-my $html = get("http:\/\/www.stearman.net\/fusetalk4\/forum\/categories.cfm\?catid\=3\&entercat\=y"); #Initial URL. This value changes throughout.
+my $html = $crawlAg->get("http:\/\/www.stearman.net\/fusetalk4\/forum\/categories.cfm\?catid\=3\&entercat\=y"); #Initial URL. This value changes throughout.
 print("HTML extracted\n$html");
 my $page_num = 1; #just to keep track of what page I'm on, I need it for being able to tell when the program should end.
 my $token = qr/"messageview\.cfm\?catid\=3\&threadid\=.*?\&enterthread\=y"/; #The link format I'm looking for which denotes a new thread
@@ -29,10 +32,10 @@ sub GetLinks{
 
 print("Variables declared.\n");
 GetLinks or die "Failed to call GetLinks";
-$html = get($url . "categories.cfm\?catid\=3\&FTVAR\_SORT\=date\&FTVAR\_SORTORDER\=desc\&STARTPAGE\=2\&FTVAR\_FORUMVIEWTMP\=Linear");
+$html = $crawlAg->get($url . "categories.cfm\?catid\=3\&FTVAR\_SORT\=date\&FTVAR\_SORTORDER\=desc\&STARTPAGE\=2\&FTVAR\_FORUMVIEWTMP\=Linear");
 GetLinks; #gotta remember to scan and save the second page, I almost forgot this
 while($page_num >= 2 && get ($url . "categories.cfm\?catid\=3\&FTVAR\_SORT\=date\&FTVAR\_SORTORDER\=desc\&STARTPAGE\=" . $page_num . "\&FTVAR\_FORUMVIEWTMP\=Linear")){ #This goes through every page that exists and downloads its list of threads
-	$html = get($url . "categories.cfm\?catid\=3\&FTVAR\_SORT\=date\&FTVAR\_SORTORDER\=desc\&STARTPAGE\=" . $page_num . "\&FTVAR\_FORUMVIEWTMP\=Linear");
+	$html = $crawlAg->get($url . "categories.cfm\?catid\=3\&FTVAR\_SORT\=date\&FTVAR\_SORTORDER\=desc\&STARTPAGE\=" . $page_num . "\&FTVAR\_FORUMVIEWTMP\=Linear");
 	GetLinks;
 }
 open my $fh, '>', "linklist.txt" or die "Cannot open linklist.txt: $!"; #Open file handler, make sure it worked, or give up (please dont give up, it would have gone through so much for nothing...)
@@ -41,5 +44,3 @@ foreach (@pagelinks){
 }
 close $fh;
 die "Completed successfully.";
-
-
